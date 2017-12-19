@@ -152,11 +152,18 @@ cacti_db_update() {
     log "Update databse with cacti config details"
     mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('font_method', '0');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('poller_type', '2');"
+        mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('plugin_watermark_text', '$rrdlogo');"
+        mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('num_rows_device', '100');"
+        mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('num_rows_data_query', '100');"
+        mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('num_rows_data_source', '100');"
+        mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('title_font', '/usr/share/fonts/msyh.ttc');"
+        mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('num_rows_graph', '250');"
+        mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('max_title_graph ', '100');"
+        mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('max_data_query_field_length', '100');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('extended_paths', 'on');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('boost_png_cache_enable', 'on');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('automation_graphs_enabled', 'on');"
-		mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('realtime_cache_path', '/var/www/html/cache/');"
-		settings_tree 
+	mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('realtime_cache_path', '/var/www/html/cache/');"
     log "Cacti Database updated"
         }
 spine_db_update() {
