@@ -1,10 +1,10 @@
 
 #### 功能介绍
-1.本脚本自动安装cacti1.1.X版本
+1.本脚本自动安装cacti0.8.8h版本
 
-2.自动安装cacti1.1.X、rrdtool1.7.0、spine1.1.X到系统
+2.自动安装cacti0.8.8h、rrdtool1.4.9、spine0.8.8h到系统
 
-3.本脚本运行在centos7.3下
+3.本脚本运行在centos6.5-6.8下
 
 4.本脚本自动添加中文微软雅黑字体到centos系统中,rrdtool及cacti默认支持中文
 
@@ -14,21 +14,24 @@
 
 7.本脚本自动添加数据库备份脚本
 
-8.本脚本自动下载目前已验证可以正常使用的cacti1.1.X版本下的插件
+8.本脚本自动下载目前已验证可以正常使用的cacti0.8.8h版本下的插件
 
 9.本脚本自动更改graph_xport.php文件编码,解决中文标题图形导出数据的乱码问题
 
 10.本脚本自动修改某些常用settings设置项
 
+11.本脚本自动安装cacti后需监控cacti本地服务器的,需修改device中localhost的snmp监控方式才可正常监控
+ 
 ---
 
 #### 使用方法
 
-```git clone https://github.com/babyfenei/cacti-autoinstall.git```
+```git clone https://github.com/babyfenei/cacti-autoinstall-centos6-0.8.8h.git```
  
-```cd cacti-autoinstall && bash start.sh```
+```cd cacti-autoinstall-centos6-0.8.8h.git && bash start.sh```
 
 ---
  
 #### 备注
 因国内墙的问题，脚本运行过程中可能会出现下载文件超时导致脚本运行失败。出现此问题时请查看脚本出错步骤的log信息，修改脚本start.sh中出错log步骤前面的运行项重新运行。
+
