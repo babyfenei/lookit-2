@@ -1,0 +1,40 @@
+/*******************************************************************************
+
+    Author ......... Jimmy Conner
+    Contact ........ jimmy@sqmail.org
+    Home Site ...... http://cactiusers.org
+    Program ........ Watermark
+
+*******************************************************************************/
+
+
+----[ Purpose
+
+	Display a text watermark at the bottom of all graphs
+
+----[ Features
+
+	PA 2.0 Compatible
+
+----[ Installation
+
+	Plugin is Plugin Architecture 2.0 only compatible
+	To install, place it in your plugin directory in a folder called "watermark"
+	Then login to Cacti, goto Plugin Management and click "Install" next to the plugin's name
+
+	You can then edit the text under Settings >> "Visual" tab >> Watermark
+    
+----[ Possible Bugs?
+   
+	If you find a problem, let me know!!!
+	http://cactiusers.org/bugs/ 
+
+----[ Future Changes
+    
+	Got any ideas or complaints, please e-mail me!
+
+----[ Changelog
+
+	--- 0.1 ---
+		Initial release
+     

@@ -1,0 +1,192 @@
+/*******************************************************************************
+
+    Author ......... Reinhard Scheck
+    Contact ........ gandalf @ cacti forums
+    Home Site ...... http://www.cacti.net
+    Program ........ Cacti Aggregate Builder
+    Version ........ 0.75
+    Purpose ........ Build Aggregate Graphs from existing ones
+
+*******************************************************************************/
+
+
+----[ Purpose
+
+    This plugin aggregates graphs from Graph Management.
+    All data you want to see must already be present on any existing graphs.
+
+----[ Features
+
+    1) Aggregates existing Graphs into a single Aggregate Graph, keeping the sequence
+       of selected Graphs and of the Graph Items within theses Graphs.
+    2) Provides a new Graph Title for the Aggregate.
+    3) Prepends all legend items with an optional text.
+    4) Provides an algorithm to add additional <HR> linebreaks.
+       This prevents ugly formatting.
+    5) Allows for converting into AREA/STACK or LINE1 graphs
+    6) Displays a list of Graph Items (taken from the first Graph selected) to allow
+       for skipping selected graph items
+    7) Allows for Totaling, either SIMILAR or ALL data sources
+    8) Defines "Color Templates". These define a list of colors, e.g. light red to dark
+       red. Allows to associate colored Graph Items to a Color Template. By doing so,
+       Graph Items of same data source will no longer show the same color but instead
+       will be colorized according to the Color Template
+
+----[ Prerequisites
+
+    Before you install Aggregate, you need to have met the following pre-requisites:
+
+    1) Cacti 0.8.6i or Above.  Versions of Cacti prior to 0.8.6 are not supported.
+    2) Cacti 0.8.6x versions requires Plugin Architecture V1.1.
+    3) Cacti 0.8.7x requires Plugin Architecture V2.x.
+       Please change ./include/global.php to add this plugin as usual
+       Please use the Plugin Management to enable the plugin
+
+----[ Installation
+
+    Cacti 0.8.6x / Plugin Architecture 1.1:
+       Please change ./include/config.php to add this plugin as usual
+    Cacti 0.8.7x / Plugin Architecture V2.x:
+       Please use the Plugin Management to install and enable the plugin    
+
+    Accessing AGGREGATE Color Templates must be enabled on a per-user-base from
+    User Management
+
+    Using the Aggregate function is granted to all users having Console access.
+
+----[ Usage
+
+    Please see attached aggregate_manual.pdf.
+    The manual is linked the the aggregate prompt screen.
+
+----[ Additional Help?
+
+    If you need additional help, please goto forums.cacti.net.
+
+----[ Possible Bugs?
+
+    If you figure out this problem, let me know!!!
+
+----[ Special Thanks
+
+	The idea to create such a plugin was first mentioned by TheWitness, even if he
+	preferred to work on Data Sources instead of Graphs.
+
+----[ Future Changes
+
+	When totaling, don't show legend items, on user request
+
+----[ Changelog
+  --- SVN ---
+  
+	--- 0.75 ---
+    Bug Fix: better index checking for color items
+    Bug Fix: html validation errors fixed
+    Bug Fix: xss vulnerabilities fixed
+    Compat:  use buttons on action confirmation
+    Compat:  compatibility with PIA 2.8
+    Feature: Allow colors to rotate
+    Feature: "Total only" implemented
+    Feature: convert to all available LINEx graph item types
+    Feature: custom prefix on total GPRINTs
+    Feature: much more sophisticated graph item type conversion
+    Feature: support for |query_*| substitution on data query graphs 
+  
+	--- 0.74 ---
+    Bug Fix: color templates were broken
+    Bug Fix: formatting of elements on the confirmation page fixed (unordered list)
+    Feature: enhanced upgrade procedure will smoothly upgrade without loosing existing color templates
+
+	--- 0.73 ---
+    Bug Fix: pass graph actions to next plugin in queue
+    Bug Fix: lot of html cleanup
+    Feature: Support sort order, especially required if base graph is AREA/STACK type
+
+	--- 0.71 ---
+    Bug Fix: setup.php throws errors due to missing table keys
+    Bug Fix: Allow "/" in title, e.g. for "/dev/sda1"
+    Bug Fix: Disconnect aggregate graph items from graph template items, thus
+            avoiding messing up aggregates when changing the "base" graph template
+
+    --- 0.70 ---
+    Feature: Support for Totalling, either for _similar_ or _all_ data sources
+      This feature will automatically create any needed CDEF by replacing
+      CURRENT_DATA_SOURCE by either
+      SIMILAR_DATA_SOURCES_NODUPS or
+      ALL_DATA_SOURCES_NODUPS
+      But it first searches for any existing CDEF that matches!
+      Those autocreated CDEFs will be named
+      AGGREGATE SIMILAR <old CDEF name> or
+      AGGREGATE ALL <old CDEF name>
+    Feature: Allow for all |host_*| variables in AGGREGATE graph items
+    Feature: remove unwanted |query_*| and |host_*| stuff from graph titles, 
+      not making sense on AGGREGATES, e.g.
+      Aggregate |host_description| - Traffic - |query_ifName|
+      will turn to
+      Aggregate - Traffic
+      This will be displayed before graph is created.
+    Feature: Do not ask for <HR> settings, compute them!
+      If an item with <HR> is skipped, set <HR> on previous item
+      Always set <HR> on last item of graph, so next graph starts "fresh"
+    Bug Fix: "Assigning the return value of new by reference is deprecated"
+      is a PHP5 compatibility issue
+      Error Handler was changed to cope with this
+    Bug Fix: Cleanup of code for creating the main graph structures
+    Bug Fix: If Graphs based on different Graph Templates are used, drop an error
+             e.g. aggregating
+    - standard traffic
+    - 95th percentile
+    - bandwidth traffic
+      will result in weird graphs. We will dop an error here,
+      advising, that a single graph template is required for aggregation
+      (To complete error handling, graphs.php needs a change)
+    Tweak:	 Split up setup.php code. It contains plugin stuff only, now
+      Aggregate functions have been moved to aggregate.php
+    Tweak:	 Input Field Validation reworked
+    Tweak:	 Form Layout now matches standard Cacti Form Layout
+
+    --- 0.66 ---
+    Tweak:	 Cleanup of README
+    Bug fix: Support issues with PIA2.1 fixed. Compatibility with 086j is still maintained
+
+    --- 0.65 ---
+    Tweak:	 Code cleanup, mostly commented stuff removed
+    Feature: New "GPRINT Prefix", defaults to |host_hostname| to mimic previous behaviour
+    Feature: PIA 2.0/Cacti 087 support
+    Bug fix: Do not specify a default character set for tables.  latin1 is not
+             universal
+
+    --- 0.64 ---
+    Bug fix: Escape cacti database names using strange characters (StephenKing)
+
+    --- 0.63 ---
+    Bug fix: Color is associated even if not using a color template
+    Feature: Required tables are auto-created
+
+    --- 0.62 ---
+    Bug fix: Initialization issues
+
+    --- 0.61 ---
+    Bug fix: Error, when deleting a Color Template
+    Tweak:   include statements use $config path variables
+
+    --- 0.6 ---
+    Added checkboxes for <HR>. On specific Graph Templates, it will not be possible
+        to compute all needed <HR>s. So we prompt you to set them manually.
+    bug: LINEx graphs converted to AREA/STACK will now have AREA on the first graph items
+
+    --- 0.5 ---
+    Managing of Color Templates
+    Referring to Color Templates allows for different colors for same data source
+
+    --- 0.4 ---
+    Add skipping of selected Graph Items
+
+    --- 0.3 ---
+    Add Graph Type Conversion
+
+    --- 0.2 ---
+    First public release, very basic functions
+
+    --- 0.1 ---
+    Initial release, first shown at 1.CCC.eu, the 1. European Cacti Community Conference.

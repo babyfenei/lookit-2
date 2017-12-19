@@ -1,0 +1,162 @@
+/*******************************************************************************
+
+    Author ......... Reinhard Scheck
+                     based on work of Jimmy Conner
+    Contact ........ gandalf@cacti.net
+    Home Site ......
+    Program ........ Send Graphs by email
+    Version ........ 0.35a
+    Purpose ........ Allows you to send graphs via Email
+
+*******************************************************************************/
+
+
+----[ Purpose
+
+    This plugin allows you to email graphs on a daily interval
+
+----[ Features
+
+    - allow both users and admins to create reports
+    - include tree's, text, horizontal rules, and graphs into reports
+    - allows filtering of tree and host content on trees by regular expression
+    - allow basic formatting
+    - allow custom css and html to be integrated into the reports
+    - specify different timespans for graphs
+    - schedule reports using different scheduling intervals
+    - basic png2jpeg conversion using php-gd, verified with linux only
+
+----[ Installation
+
+    PIA 2.x based installation required
+
+    NOTE: You must patch the settings plugin using the attached patch
+
+    NOTE: You must update the ./lib/html_utility.php file if running
+          Cacti versions less than or equal to 0.8.7e
+          
+    NOTE: Using Cacti 0.8.7g with PIA 2.8 requires to replace 
+          plugins/settings/include/mailer.php with the one found in
+          nectar/0.8.7g
+          
+    NOTE: When using Cacti 0.8.7g with SETTINGS 0.71, mailer.php does
+          not need to be replaced
+
+----[ Usage
+
+    Nectar provides for creating simple report output.  However, in
+    the 'formats' directory, you can include custom html and css files
+    to control the look and feel of the e-mail message.
+
+    In the case you choose to include not only css, but wrap the report
+    in html, you must either place a special <REPORT> tag inside the
+    report, or be prepared for the report contents to immediately follow
+    the content of your special file.
+
+    The format files must exist in the 'formats' directory and have a
+    'format' file extension.  No other files in this directory will
+    be processed.  In addition, they need to include a "Description:"
+    comment line that will be used inside of the Nectar UI to describe
+    the format file.
+
+    Any image data that you include, must be fully addressable by url
+    as currently Nectar will not process that image data into attachments.
+
+----[ Changelog
+    --- v0.35 ---
+    feature: Add Bcc capabilities to Nectar
+    fix:     fix table upgrade for bcc
+
+    --- v0.34 ---
+    fix:     times should not change when you force sending a report
+    fix:     if a fractional send time is specified in the past, make it the next day at the same time
+    fix:     if a time in the distant past is used, default to tomorrow at the same time
+    fix:     offset makes no sense in current design, removing from the UI and tuning table display
+
+    --- v0.32 ---
+    fix:     numerous typos in the settings page
+    fix:     after a failed save, the report date is reported in timestamp format
+
+    --- v0.31 ---
+    fix:     use report name as default title (courtesy Tom Vrugt)
+    fix:     When using a link, don't include a border
+    feature: Set default for subject, e-mail address and from name
+    fix:     The root of a tree would often not render properly
+    fix:     Empty Tree Leaves would generate empty table rows
+
+    --- v0.30 ---
+    fix:     invalid call to not-initialized $config variable (courtesy Tom Vrugt)
+    fix:     invalid SERVER_NAME when running in batch, rendering links unusable
+    fix:     typo in variable name for attachments
+
+    --- v0.29 ---
+    feature: (optionally) add links to the graphs to images posted by email
+
+    --- v0.28 ---
+    compat:  match cacti 0.8.7g with PIA 2.8
+    fix:     wrong time used on Events tab
+    fix:     enhanced logging
+    feature: switch added to create Lotus Notes (tm) compatible inline attachments
+    feature: add ability to attach graphics as inline or pure attachment
+    feature: support logging level that applies to NECTAR only
+
+    --- v0.27 ---
+    compat: Allow proper navigation text generation
+    bug: guest user could not view tabs properly
+
+    --- v0.26 ---
+    bug: Add button not working as expected if no tab has been selected
+    bug: Visual issue in IEx browsers
+
+    --- v0.25 ---
+    bug: update procedure for nectar_items failed update
+    bug: minor fix for displaying nectar_item columns
+
+    --- v0.24 ---
+    feature: Allow an administrator to set a preset image type
+    feature: Allow control of the maximum e-mail message size
+    feature: Place Items on a separate tab
+    feature: Allow e-mail send during edit
+    feature: Allow adding Graphs to Report from Graph Management
+    feature: Display messages during send/save
+    feature: Don't allow e-mail sends with insufficient information
+    bug: Nectar users could see and send others reports
+    bug: If you pointed your browser to nectar.php or nectar_user.php and wern't logged in errors flowed
+    bug: Empty branches would attempt to be reported on
+    bug: Session variables were not always set
+    bug: If the poller interval is not set, don't assume it is.
+
+    --- v0.22 ---
+    fix:     some html fixes
+    fix:     fixing deprecated functions
+    fix:     duplicate report working again
+    fix:     some html validation issues fixed
+    fix:     correct user level permission issues
+    feature: Support Tree Cascade
+
+    --- v0.20 ---
+    fix:     Graphs were not being generated correctly in reports
+    fix:     Resolve issues time in the past warnings during save
+    feature: Create two access levels: Admin and User
+    feature: Allow users to create and manage their own reports
+    feature: Allow more granular report item drilldown
+    feature: Re-introduce graph previews when adding graphs
+    feature: Break the Report edit screen into a tabbed view
+    feature: Remember the last host template and host when adding graphs
+    feature: Support the Tree object in the report
+    feature: Support title font size
+    feature: Support graph size, type and number of columns
+    feature: Support custom css and html wrappers for the reports
+    feature: Allow the report name and email subject line to be different
+    feature: Add Horizontal Rule element
+    feature: Support filter tree and host graphs by regular expression
+
+    --- v0.12 ---
+    fix:     Mail attachment, coutesy tontonitch
+
+    --- v0.11 ---
+    feature: Add GIF support, again based on php-gd
+
+    --- v0.1 ---
+    - initial release
+

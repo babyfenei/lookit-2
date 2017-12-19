@@ -1,0 +1,12 @@
+--- cycle.js.orig	2011-12-08 12:22:59.330528025 +0000
++++ cycle.js	2011-12-08 12:21:36.585522885 +0000
+@@ -103,7 +103,7 @@
+ 		leaf="";
+ 	}
+ 
+-	url="?id="+nextid+"&filter="+filter+"&cols="+$('#cols').val()+"&timespan="+$('#timespan').val()+"&graphs="+$('#graphs').val()+"&tree_id="+tree+"&leaf_id="+leaf+"&legend="+$('#legend:checked').length+"&width="+$('#width').val()+"&height="+$('#height').val();
++	url="?id="+nextid+"&filter="+filter+"&cols="+$('#cols').val()+"&timespan="+$('#timespan').val()+"&graphs="+$('#graphs').val()+"&tree_id="+tree+"&leaf_id="+leaf+"&legend="+$('#legend:checked').length+"&width="+$('#width').val()+"&height="+$('#height').val()+"&refresh="+$('#refresh').val();
+ 
+ 	processAjax(url);
+ }
+

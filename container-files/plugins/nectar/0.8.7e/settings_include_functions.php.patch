@@ -1,0 +1,42 @@
+--- cacti_plugins/settings/trunk/include/functions.php	2009-10-29 23:46:43.000000000 +0100
++++ plugin087d/plugins/settings/include/functions.php	2009-12-05 22:23:07.000000000 +0100
+@@ -22,7 +22,7 @@
+  +-------------------------------------------------------------------------+
+ */
+ 
+-function send_mail($to, $from, $subject, $message, $filename = '', $headers = '') {
++function send_mail($to, $from, $subject, $message, $data_array = '', $headers = '') {
+ 	global $config;
+ 	include_once($config["base_path"] . "/plugins/settings/include/mailer.php");
+ 
+@@ -107,24 +107,22 @@
+ 		return $Mailer->error();
+ 	}
+ 
+-	if (is_array($filename) && !empty($filename) && strstr($message, '<GRAPH>') !==0) {
+-		foreach($filename as $val) {
+-			$graph_data_array = array("output_flag"=> RRDTOOL_OUTPUT_STDOUT);
+-  			$data = rrdtool_function_graph($val['local_graph_id'], $val['rra_id'], $graph_data_array);
+-			if ($data != "") {
++	if (is_array($data_array) && !empty($data_array) && strstr($message, '<GRAPH>') !==0) {
++		foreach($data_array as $data_item) {
++			if ($data_item["attachment"] != "") {
+ 				$cid = $Mailer->content_id();
+-				if ($Mailer->attach($data, $val['filename'].'.png', "image/png", "inline", $cid) == false) {
++				if ($Mailer->attach($data_item["attachment"], $data_item['filename'], $data_item["mime_type"], $data_item["inline"], $cid) == false) {
+ 					print "ERROR: " . $Mailer->error() . "\n";
+ 					return $Mailer->error();
+ 				}
+ 				$message = str_replace('<GRAPH>', "<br><br><img src='cid:$cid'>", $message);
+ 			} else {
+-				$message = str_replace('<GRAPH>', "<br><img src='" . $val['file'] . "'><br>Could not open!<br>" . $val['file'], $message);
++				$message = str_replace('<GRAPH>', "<br><img src='" . $data_item['file'] . "'><br>Could not open!<br>" . $data_item['file'], $message);
+ 			}
+ 		}
+ 	}
+ 	$text = array('text' => '', 'html' => '');
+-	if ($filename == '') {
++	if ($data_array == '') {
+ 		$message = str_replace('<br>',  "\n", $message);
+ 		$message = str_replace('<BR>',  "\n", $message);
+ 		$message = str_replace('</BR>', "\n", $message);

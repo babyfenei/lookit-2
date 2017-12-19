@@ -1,0 +1,64 @@
+#!/bin/bash
+USERNAME="cactiuser"           #数据库用户名
+PASSWORD="cactiuser"    #数据库密码
+DBNAME="cacti"            #Cacti使用的数据库名称
+TABLE="settings"
+MYSQL_CMD="mysql  -u${USERNAME} -p${PASSWORD}"
+
+rm -rf /tmp/list.log      #删除旧的下载列表文件
+#select replace(title_cache,'*','') 此语句是去除图形标题中的*号 我的所有图形树中的图形都有*号 如果没有可将本语句改为 select title_cache,
+select_db_sql=" select value from settings where name = 'thold_wechat_cropid' OR name = 'thold_wechat_secret' OR name = 'thold_wechat_appid';"
+echo ${select_db_sql}  | ${MYSQL_CMD}  ${DBNAME}    > /tmp/list.log              #查询图形树表中的图形ID非0的数据并将结果保存至下载列表
+
+CropID=$(cat /tmp/list.log | head -n 3 | tail -n 1)
+Secret=$(cat /tmp/list.log | head -n 4 | tail -n 1)
+WechatID=$(cat /tmp/list.log | head -n 2 | tail -n 1)
+Users=$1
+UserID=${Users//,/|}
+echo "$Users" >> /tmp/users.txt
+echo "$UserID" >> /tmp/userid.txt
+
+
+
+
+GURL="https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=$CropID&corpsecret=$Secret"
+Gtoken=$(/usr/bin/curl -s -G $GURL | awk -F\" '{print $4}')
+PURL="https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=$Gtoken"
+function body() {
+local int AppID=$WechatID
+Ent=$'\n'
+Date=$(date '+%Y/%m/%d %H:%M:%S\n\n')
+#应cactifans群内要求，添加Cacti微信报警日期参数
+Tit=$(cat /tmp/title.txt)
+#读取/tmp/title文件中内容到变量Tit
+Msg=$Date$Tit$Ent$(cat /tmp/message.txt|sed 's/%//g')
+#Msg=$2
+Url=$(grep  "http" /tmp/message.txt|sed  's/URL: //g')
+#获取message.txt中的url行内容
+Pic_tmp=$(grep  "http" /tmp/message.txt|sed  's/URL: //g'|sed 's/\/graph.php/\/graph_image.php/g')
+if [ ! -n "$Pic_tmp" ] ;then
+Pic=""
+else
+Pic=$Pic_tmp$'&graph_height=100&graph_width=300&t='$Date
+fi
+#根据url行内容修改为添加Pic参数
+printf '{\n'
+printf '\t"touser": "'"$UserID"\"",\n"
+printf '\t"toparty": "'"$PartyID"\"",\n"
+printf '\t"totag": "'"$TagID"\"",\n"
+printf '\t"msgtype": "news",\n'
+printf '\t"agentid": "'" $AppID "\"",\n"
+printf '\t"news": {\n'
+printf '\t"articles": [\n'
+printf '{\n'
+printf '\t\t"title": "'"$Tit"\","\n"
+printf '\t\t"description": "'"$Msg"\","\n"
+printf '\t\t"url": "'"$Url"\","\n"
+printf '\t\t"picurl": "'"$Pic"\","\n"
+printf '\t}\n'
+printf '\t]\n'
+printf '\t}\n'
+printf '}\n'
+}
+/usr/bin/curl --data-ascii "$(body )" $PURL
+

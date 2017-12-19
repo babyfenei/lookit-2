@@ -1,0 +1,111 @@
+/*******************************************************************************
+
+    Author ......... Mathieu Virbel
+    Contact ........ mathieu.v@capensis.fr
+    Home Site ...... http://capensis.org/
+    Program ........ Realtime Graph Viewer
+    Version ........ 0.5
+    Purpose ........ View Cacti Graphs in Realtime
+
+*******************************************************************************/
+
+----[ Purpose
+
+    Provides a method to view Cacti graphs with a resolution of upto
+    5 seconds.
+
+----[ Features
+
+    Allows Syncronization between windows.  Dynamically sizes viewing 
+    window based upon graph size.  Uses Ajax for Graph generation.
+
+----[ Installation
+
+    Install just like any other plugin, just throw it in the plugin 
+    directory, in a folder called realtime.
+
+    Create a folder somewhere on your system that is accessible to the
+    apache user for writing.
+
+    Edit your include/global.php and add it to your $plugins list, 
+    and you are rolling.
+    
+----[ Possible Bugs?
+   
+    If you figure out this problem, let me know!!!
+
+----[ Future Changes
+    
+   Got any ideas or complaints, please e-mail me!
+
+----[ ChangeLog
+    --- 0.5 ---
+    -feature: One more crack at auto-sizing
+    -feature: Change permissions on the RRDfile to allow poller to purge
+
+    --- 0.43 ---
+    -bug: Fix issue where realms can be damaged when upgrading
+    -bug: If display_errors is enabled, warning message cause graphs to break
+
+    --- 0.42 ---
+    -bug: remove memory limits.  They cause issues on more recent PHP versions
+
+    --- 0.41 ---
+    -feature: support for 0.8.7f
+    -compat: remove support for PIA 1.x
+
+    --- 0.4 ---
+    -feature: handle the refresh of the image transparently
+    -bug: resize FF window more appropriately
+
+    --- 0.36 ---
+    -feature: make compatible with PIA2.x
+    -feature: make the plugin auto upgrade
+    -bug: increate window size by 10 pixels
+
+    --- 0.35 ---
+    -bug: fix in 0.34 for initializing poller and cmd not working
+    -bug: don't show the realtime icon unless the user has access
+
+    --- 0.34 ---
+    -bug: Remove sessions issues when Ajax off and Sync off
+    -bug: cmd_rt.php and poller_rt.php not initializing properly
+          on some platforms.
+
+    --- 0.33 ---
+    -bug: Some browsers have problem with the Ajax method, make optional
+    -bug: Remove cacti availability checks as they cause problems with
+          some systems.
+
+    --- 0.32 ---
+    -feature: Use Ajax!
+    -feature: Allow the user to synchoronize windows
+    -feature: Add Ajax (loading) image
+
+    --- 0.31 ---
+    -bug: Fix issue in Windows with extra slash
+    -bug: Allow to work with previous versions of Cacti
+    -bug: Keep dropdowns from reseting
+    -bug: Allow full display on IE6
+    -bug: Change image from png to gif to correct visual affect on 
+          substandard browsers (IE6 again)     
+
+    --- 0.3 ---
+    -bug: Make compatible with Windows.
+    -bug: Remove excessive Cacti logging where it should not be.
+    -bug: Make the poller_id more random to handle multiple users.
+    -bug: Remove table modification code that was not required.
+    -bug: Move RRDfiles to their own directory.
+    -feature: Make the default step "5" to keep all graphs compatible with 
+              one another.
+    -feature: Allow the designation of default timespan and update 
+              intervals.
+    -feature: Resize window based upon actual image size.
+    -feature: Allow altering of the display window timespan.
+    -feature: Add a cache directory setting.
+
+    --- 0.2 ---
+    Add some additional features.
+
+    --- 0.1 ---
+    Initial release

@@ -1,0 +1,87 @@
+/*******************************************************************************
+
+    Author ......... Larry Adams
+    Contact ........ larryjadams@comcast.net
+    Home Site ...... http://www.cacti.net
+    Program ........ Cacti Log Viewer
+    Version ........ 1.7
+    Purpose ........ Simple Log Viewer Plugin for Cacti
+
+*******************************************************************************/
+
+
+----[ Purpose
+
+    Many users of Cacti require access to the log, but should not be allowed
+    to erase it.  This plugin allows administrators the ability to share the
+    log and it's powerfull regex functionality without exposing it to deletion.
+
+----[ Features
+
+    Allows users to see, and not purge log
+    Allows Cacti administrators to hide sensitive information from users
+
+----[ Prerequisites
+
+    Cacti PIA 2.x
+
+----[ Installation
+
+    Simply place in the plugins directory and install like any other PIA 2.x
+    plugin.
+
+----[ Additional Help?
+
+    If you need additional help, please goto forums.cacti.net.
+
+----[ Possible Bugs?
+
+    If you figure out this problem, let me know!!!
+
+----[ Special Thanks
+
+    Ben Marcus.  You know who you are :)
+
+    Jimmy Conner (cigamit) - For bringing the plugin architecture to
+    the world of Cacti and provding continual support of my development
+    efforts.
+
+----[ Future Changes
+
+    Got any ideas or complaints, please e-mail me!
+
+----[ Changelog
+    --- 1.7 ---
+    -bug: Apache error log receiving entries from user_log.php
+    -bug: Add index.php file for security reasons
+    -bug: Session expiring results in loss of permissions
+    -bug: Change purging of logfile so that page refresh does not re-purge
+
+    --- 1.6 ---
+    -bug: Fix issue where realms can be damaged when upgrading
+
+    --- 1.5 ---
+    -compat: Allow proper navigation text generation
+    -bug: Guest user could not access site
+
+    --- 1.4 ---
+    -feature: Change to 100% 2.0 Realms
+    -feature: More cleanly break user and admn rights
+    -bug: Fix page refresh interference in other pages
+
+    --- 1.3 ---
+    -feature: Drop PIA 1.x support
+    -feature: Add 'purge' button for admin level
+
+    --- 1.21 ---
+    -bug: Exclusion filters were reversed for some reason
+
+    --- 1.2 ---
+    -feature: Support regular expressions to remove sensitive information from user view
+    -feature: Support two levels of permissions to allow Admin users to see everything
+
+    --- 1.1 ---
+    -bug: Links to problem Data Sources Should point to Graphs and Not Data Sources
+
+    --- 1.0 ---
+    Initial release
