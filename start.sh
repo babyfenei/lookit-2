@@ -293,7 +293,6 @@ update_httpd() {
         }
 
 # ## Magic Starts Here
-set_timezone
 install_dependency_packs
 install_rrdtool
 install_cacti
@@ -319,7 +318,7 @@ install_syslog
 load_temple_config
 update_cron
 update_httpd
-
+set_timezone
 
 iptables -I INPUT -p tcp -m multiport --dport 3306,80 -j ACCEPT
  
