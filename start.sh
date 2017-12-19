@@ -279,10 +279,11 @@ set_timezone() {
                 echo "date.timezone = ${TIMEZONE}" >> /etc/php.ini
                 log "TIMEZONE set to: ${TIMEZONE}"
     fi
-    rm -rf /etc/localtime
-    ln -s  /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
-        sed -i 's/^.*LANG="en_US.UTF-8*$/LANG="zh_CN.UTF-8"/' /etc/locale.conf
-        }
+    	rm -rf /etc/localtime
+    	ln -s  /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
+        sed -i 's/LANG="en_US.UTF-8"/LANG="zh_CN.UTF-8"/' /etc/sysconfig/i18n
+	source /etc/sysconfig/i18n
+	}
 update_httpd() {
     log "Updating httpd config"
     sed -i 's#$path#'$path'#' /etc/httpd/conf.d/cacti.conf
