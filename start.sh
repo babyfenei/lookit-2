@@ -152,6 +152,7 @@ cacti_db_update() {
     log "Update databse with cacti config details"
     mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('font_method', '0');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('poller_type', '2');"
+        mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('path_rrdtool_default_font', '/usr/share/fonts/msyh.ttc');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('plugin_watermark_text', '$rrdlogo');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('num_rows_device', '100');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('num_rows_data_query', '100');"
