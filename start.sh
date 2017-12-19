@@ -337,6 +337,5 @@ service crond restart
 service snmpd restart
 service redis restart
 
-/usr/bin/php /var/www/html/poller.php --force
 
 log "Cacti Server UP."
