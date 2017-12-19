@@ -263,7 +263,9 @@ change_auth_config() {
         sed -i "s/include('.\/include\/auth.php');/#include('.\/include\/auth.php');/" $path/graph_xport.php
         sed -i "/include('.\/include\/auth.php');/a include('.\/include\/global.php');" $path/graph_image.php
         sed -i "s/include('.\/include\/auth.php');/#include('.\/include\/auth.php');/" $path/graph_image.php
-		sed -i "s/\/usr\/local\/bin\/rrdtool/\/usr\/bin\/rrdtool/" $path/install/index.php
+	sed -i "s/\/usr\/local\/bin\/rrdtool/\/usr\/bin\/rrdtool/" $path/install/index.php
+	# chinese language support
+	sed -i "2 s/^/setlocale(LC_CTYPE,\"UTF8\",\"en_US.UTF-8\");\n/"  /var/www/html/lib/functions.php
         log "export auth file changed"
         }
 update_cron() {
