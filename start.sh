@@ -95,7 +95,7 @@ move_cacti() {
                 rm -rf $path/*
                 \cp -rf  /cacti/* $path/
                 mkdir -p $path/log
-				mkdir -p $path/cache
+		mkdir -p $path/cache
                 touch $path/log/cacti.log
                 chown -R apache:apache $path
                 # If you need to open the URL directly, cacti does not need to add the suffix pattern of http://url/cacti You need cancels the downlink annotation to make it run
@@ -152,12 +152,10 @@ cacti_db_update() {
     log "Update databse with cacti config details"
     mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('font_method', '0');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('poller_type', '2');"
-        #mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('path_rrdtool_default_font', '/usr/share/fonts/msyh.ttc');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('plugin_watermark_text', '$rrdlogo');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('num_rows_device', '100');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('num_rows_data_query', '100');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('num_rows_data_source', '100');"
-        #mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('title_font', '/usr/share/fonts/msyh.ttc');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('num_rows_graph', '250');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('max_title_graph ', '100');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('max_data_query_field_length', '100');"
@@ -293,7 +291,9 @@ update_httpd() {
         }
 
 # ## Magic Starts Here
+
 install_dependency_packs
+set_timezone
 install_rrdtool
 install_cacti
 install_spine
@@ -318,7 +318,6 @@ install_syslog
 load_temple_config
 update_cron
 update_httpd
-set_timezone
 
 iptables -I INPUT -p tcp -m multiport --dport 3306,80 -j ACCEPT
  
@@ -336,5 +335,6 @@ service crond restart
 service snmpd restart
 service redis restart
 
+/usr/bin/php /var/www/html/poller.php --force
 
 log "Cacti Server UP."
