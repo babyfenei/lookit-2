@@ -7,7 +7,8 @@ MYSQL_CMD="mysql  -u${USERNAME} -p${PASSWORD}"
 
 rm -rf /tmp/wechat/      #删除旧的下载列表文件
 mkdir -p /tmp/wechat/
-#select replace(title_cache,'*','') 此语句是去除图形标题中的*号 我的所有图形树中的图形都有*号 如果没有可将本语句改为 select title_cache,
+#select replace(title_cache,'*','') 此语句是去除图形标题中的*号 我的所有图形树中的图形都有*号 如果没
+有可将本语句改为 select title_cache,
 select_db_sql=" select value from settings where name = 'thold_wechat_cropid' OR name = 'thold_wechat_secret' OR name = 'thold_wechat_appid';"
 echo ${select_db_sql}  | ${MYSQL_CMD}  ${DBNAME}    > /tmp/wechat/list.log              #查询图形树表中的图形ID非0的数据并将结果保存至下载列表
 CropID=$(cat /tmp/wechat/list.log | head -n 3 | tail -n 1)
@@ -23,9 +24,9 @@ wx_msg=$(echo "$wx_msg"|sed 's/<br>/\n/g'|sed 's/<html>\|<\/html>\|<body>\|<\/bo
 wx_msg=$(echo "$wx_msg"|sed 's/\/\/graph.php/\/graph.php/g')
 
 ###########################################以下为微信报警接口文件#####################################################
-GURL="https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=$CropID&corpsecret=$Secret"
-Gtoken=$(/usr/bin/curl -s -G $GURL | awk -F\" '{print $4}')
-PURL="https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=$Gtoken"
+#GURL="https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=$CropID&corpsecret=$Secret"
+#Gtoken=$(/usr/bin/curl -s -G $GURL | awk -F\" '{print $10}')
+#PURL="https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=$Gtoken"
 
 #############################################以下为相关变量处理##################################################
 UserID=${Users//,/|}
@@ -72,13 +73,18 @@ echo "pic_url is $pic_url" >> /tmp/wxmsg.debug
 echo "gid is $gid" >> /tmp/wxmsg.debug
 echo "gdate is $gdate" >> /tmp/wxmsg.debug
 echo "Pic is $Pic" >> /tmp/wxmsg.debug
+echo "body is $body" >> /tmp/wxmsg.debug
+echo "PURL is $PURL" >> /tmp/wxmsg.debug
+echo "GURL is $GURL" >> /tmp/wxmsg.debug
+echo "Gtoken is $Gtoken" >> /tmp/wxmsg.debug
+echo "AppID is $AppID" >> /tmp/wxmsg.debug
 #############################################################################
 
 
 
 ###########################################以下为微信报警接口文件#####################################################
 GURL="https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=$CropID&corpsecret=$Secret"
-Gtoken=$(/usr/bin/curl -s -G $GURL | awk -F\" '{print $4}')
+Gtoken=$(/usr/bin/curl -s -G $GURL | awk -F\" '{print $10}')
 PURL="https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=$Gtoken"
 function body() {
 local int AppID=$WechatID

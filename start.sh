@@ -150,7 +150,8 @@ import_db() {
         }
 cacti_db_update() {
     log "Update databse with cacti config details"
-    mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('font_method', '0');"
+    	mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('font_method', '0');"
+    	mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('max_title_data_source', '150');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('poller_type', '2');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('plugin_watermark_text', '$rrdlogo');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('num_rows_device', '100');"
@@ -257,10 +258,8 @@ install_syslog() {
 
 change_auth_config() {
         log "change export auth file"
-        sed -i "/include('.\/include\/auth.php');/a include('.\/include\/global.php');" $path/graph_xport.php
-        sed -i "s/include('.\/include\/auth.php');/#include('.\/include\/auth.php');/" $path/graph_xport.php
-        sed -i "/include('.\/include\/auth.php');/a include('.\/include\/global.php');" $path/graph_image.php
-        sed -i "s/include('.\/include\/auth.php');/#include('.\/include\/auth.php');/" $path/graph_image.php
+        sed -i "s/auth.php/global.php/" $path/graph_xport.php
+        sed -i "s/auth.php/global.php/" $path/graph_image.php
 	sed -i "s/\/usr\/local\/bin\/rrdtool/\/usr\/bin\/rrdtool/" $path/install/index.php
 	# chinese language support
 	sed -i "2 s/^/setlocale(LC_CTYPE,\"UTF8\",\"en_US.UTF-8\");\n/"  /var/www/html/lib/functions.php
