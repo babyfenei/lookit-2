@@ -36,7 +36,7 @@
 
 ![cacti_backup_export](/container-files/pic/cacti_console.png)
 ![cacti_plugin_management](/container-files/pic/cacti_plugin_management.png)
-![cacti_ settings](/container-files/pic/cacti_ settings.png)
+![cacti_settings](/container-files/pic/cacti_settings.png)
 ![cacti_thold](/container-files/pic/cacti_thold.png)
 ![cacti_graph](/container-files/pic/cacti_graph.png)
 ![cacti_syslog _viewer](/container-files/pic/cacti_syslog _viewer.png)
