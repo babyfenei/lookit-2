@@ -43,6 +43,7 @@
 ![cacti_backup_export](/container-files/pic/cacti_backup_export.png)
 ![cacti_export](/container-files/pic/cacti_export.png)
 ![rrdtool_logo](/container-files/pic/rrdtool_logo.png)
+![thold_wechat](/container-files/pic/thold_wechat.png)
  
 
 
