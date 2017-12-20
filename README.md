@@ -41,7 +41,8 @@
 ![cacti_graph](/container-files/pic/cacti_graph.png)
 ![cacti_syslog _viewer](/container-files/pic/cacti_syslog _viewer.png)
 ![cacti_backup_export](/container-files/pic/cacti_backup_export.png)
-![cacti_export.png](/container-files/pic/cacti_export.png)
+![cacti_export](/container-files/pic/cacti_export.png)
+![rrdtool_logo](/container-files/pic/rrdtool_logo.png)
  
 
 
