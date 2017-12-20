@@ -31,7 +31,18 @@
 ```cd cacti-autoinstall-centos6-0.8.8h.git && bash start.sh```
 
 ---
+
+#### 示例图片
+
+![cacti_backup_export](/container-files/pic/cacti_console.png)
+![cacti_plugin_management](/container-files/pic/cacti_plugin_management.png)
+![cacti_ settings](/container-files/pic/cacti_ settings.png)
+![cacti_thold](/container-files/pic/cacti_thold.png)
+![cacti_graph](/container-files/pic/cacti_graph.png)
+![cacti_syslog _viewer](/container-files/pic/cacti_syslog _viewer.png)
+![cacti_backup_export](/container-files/pic/cacti_backup_export.png)
+![cacti_export.png](/container-files/pic/cacti_export.png)
  
-#### 备注
-因国内墙的问题，脚本运行过程中可能会出现下载文件超时导致脚本运行失败。出现此问题时请查看脚本出错步骤的log信息，修改脚本start.sh中出错log步骤前面的运行项重新运行。
+
+
 
