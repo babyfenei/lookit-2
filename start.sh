@@ -250,7 +250,8 @@ install_syslog() {
         echo '$ModLoad imtcp' >> /etc/rsyslog.conf
         echo '$UDPServerRun 514' >> /etc/rsyslog.conf
         echo '$ModLoad ommysql' >> /etc/rsyslog.conf
-        echo '*.*    >localhost,syslog,cactiuser,cactiuser;cacti_syslog' >> /etc/rsyslog.conf
+	 echo "\$template cacti_syslog,\"INSERT INTO syslog_incoming(facility, priority, date, time, host, message) values (%syslogfacility%, %syslogpriority%, '%timereported:::date-mysql%', '%timereported:::date-mysql%', '%HOSTNAME%', '%msg%')\", SQL" >> /etc/rsyslog.conf
+	echo '*.*   >localhost,syslog,cactiuser,cactiuser;cacti_syslog' >> /etc/rsyslog.conf
         echo '*.*   /var/log/syslog.log' >> /etc/rsyslog.conf
         chkconfig rsyslog on
         service rsyslog restart
