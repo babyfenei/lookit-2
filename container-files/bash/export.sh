@@ -49,10 +49,15 @@ mkdir -p $(date -d 1 +%Y/%m/month/data)
 #Cacti网址阐述 这里必须在后面加'/'号 否则报错
 URL="http://localhost/cacti/"
 #获取当日日期  判断是否是1号
+ent=`date '+%Y-%m-%d 23:59:59' --date="-1 day"`
+dstt=`date '+%Y-%m-%d 00:00:00' --date="-1 day"`
+mstt=`date '+%Y-%m-%d 00:00:00' --date="-1 month"`
 DAY=`date +%d`
-ENT=`date +%s`
-DSTT=`date +%s -d'-1 day'`
-MSTT=`date +%s -d'-1 month'`
+ENT=`date -d "$ent" +%s`
+DSTT=`date -d "$dstt" +%s`
+MSTT=`date -d "$mstt" +%s`
+
+
 
 #删除不需要下载的图形（匹配特定字符）
 sed -e '/ceshi/d;/ifAlias/d' /tmp/export.log > /tmp/export.list
