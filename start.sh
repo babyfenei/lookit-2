@@ -343,7 +343,8 @@ install_syslog
 load_temple_config
 update_cron
 update_httpd
-
+update_csv_time
+update_csv_CHN
 iptables -I INPUT -p tcp -m multiport --dport 3306,80 -j ACCEPT
  
 service iptables save
