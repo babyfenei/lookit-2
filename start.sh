@@ -38,20 +38,20 @@ install_dependency_packs() {
         yum makecache
         yum install -y epel-release
         yum install -y  perl-devel  php-gmp php-opcache php-devel php-mbstring php-mcrypt php-mysql php-phpunit-PHPUnit \
-        php-gd php-ldap php-mbstring php-mcrypt php-pecl-xdebug php-pecl-xhprof php-opcache php-pecl-redis php-redis \
+        php-gd php-xml php-ldap php-mbstring php-mcrypt php-pecl-xdebug php-pecl-xhprof php-opcache php-pecl-redis php-redis \
         php-pecl-xdebug php-pecl-xhprof php-snmp
         yum install -y automake mysql mysql-devel mysql-server  gnumeric  wget gzip help2man libtool make net-snmp-devel \
-        m4  openssl-devel dos2unix   redis      \
+        m4 glib  openssl-devel dos2unix   redis      \
         dejavu-fonts-common dejavu-lgc-sans-mono-fonts dejavu-sans-mono-fonts   \
         net-snmp net-snmp-utils  gcc pango-devel libxml2-devel net-snmp-devel cronie \
-        sendmail  httpd  rsyslog-mysql vim ntpdate
+        sendmail mailx  httpd  rsyslog-mysql vim ntpdate
         rpm --rebuilddb && yum clean all
         \cp -rf container-files/* /
         }
 install_rrdtool() {
         log "### Install rrdtool###"
     mkdir -p /rrdtool/ && rm -rf /rrdtool/*
-    #wget -O /packages/rrdtool/rrdtool.tar.gz  http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.4.9.tar.gz 
+    #wget --no-check-certificate -O /packages/rrdtool/rrdtool.tar.gz  http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.4.9.tar.gz 
     tar zxvf /packages/rrdtool/rrdtool*.tar.gz -C /rrdtool --strip-components=1
     cd /rrdtool/
         sed -i "s/RRDTOOL \/ TOBI OETIKER/$rrdlogo/g" src/rrd_graph.c
@@ -65,7 +65,7 @@ install_rrdtool() {
 
 install_cacti() {
         log "### ### Install cacti"
-       # wget -O /packages/cacti/cacti.tar.gz   http://www.cacti.net/downloads/cacti-0.8.8h.tar.gz 
+       # wget --no-check-certificate -O /packages/cacti/cacti.tar.gz   http://www.cacti.net/downloads/cacti-0.8.8h.tar.gz 
         mkdir -p /cacti/ && rm -rf /cacti/*
         tar zxvf /packages/cacti/cacti*.tar.gz -C /cacti --strip-components=1
     rm -rf /packages/cacti/cacti*.tar.gz
@@ -75,7 +75,7 @@ install_cacti() {
 
 install_spine() {
         log "### ### Install spine"
-    #wget -O /packages/spine/cacti-spine.tar.gz http://www.cacti.net/downloads/spine/cacti-spine-0.8.8h.tar.gz
+    #wget --no-check-certificate -O /packages/spine/cacti-spine.tar.gz http://www.cacti.net/downloads/spine/cacti-spine-0.8.8h.tar.gz
     mkdir -p /spine && rm -rf /spine/*
     tar xf /packages/spine/cacti-spine*.tar.gz -C /spine --strip-components=1
     rm -f /packages/spine/cacti-spine*.tar.gz
@@ -100,7 +100,7 @@ move_cacti() {
                 chown -R apache:apache $path
                 # If you need to open the URL directly, cacti does not need to add the suffix pattern of http://url/cacti You need cancels the downlink annotation to make it run
                 # sed -i "s/$url_path = '\/cacti\/';/$url_path = '\/';/g" $path/include/config.php 
-                sed -i "s/'--maxrows=10000' . RRD_NL;/'--maxrows=1000000000' . RRD_NL;/" $path/lib/rrd.php
+                sed -i "s/--maxrows=10000/--maxrows=1000000000/" $path/lib/rrd.php
                 sed -i "s/\$gprint_prefix = '|host_hostname|';/\$gprint_prefix = '|query_ifName|';/" $path/graphs.php
                 sed -i "s/'default' => AGGREGATE_TOTAL_NONE/'default' => AGGREGATE_TOTAL_ALL/g" $path/include/global_form.php
                 #Modify the graph_xport.php file encoding so that the exported files support Chinese
@@ -287,15 +287,39 @@ set_timezone() {
 update_httpd() {
     log "Updating httpd config"
     sed -i 's#$path#'$path'#' /etc/httpd/conf.d/cacti.conf
-        
-    log "httpd config updated."
+    sed -i 's/Timeout 60/Timeout 600/'  /etc/httpd/conf/httpd.conf
+    sed -i 's/KeepAliveTimeout 15/KeepAliveTimeout 600/'  /etc/httpd/conf/httpd.conf
+    sed -i 's/memory_limit = 128M/memory_limit = 2048M/' /etc/php.ini
+    sed -i 's/max_execution_time = 30/max_execution_time = 300/' /etc/php.ini
+	log "httpd config updated."
         }
 
-# ## Magic Starts Here
+update_csv_CHN(){
+### modify xport use UTF-8
+sed -i "s/header('Content-type: application\/vnd.ms-excel');/header('Content-type: application\/vnd.ms-excel; charset=UTF-8');\nheader('Content-Transfer-Encoding: binary');/" /var/www/html/graph_xport.php
+
+sed -i "/function rrdxport2array(\$data) {/a\ \t\$data = str_replace(array('US-ASCII', 'ISO-8859-1'), 'UTF-8', \$data);" /var/www/html/lib/xml.php 
+sed -i "s/$p = xml_parser_create();/$p = xml_parser_create('UTF-8');/" /var/www/html/lib/xml.php
+sed -i "/xml_parser_set_option(\$p, XML_OPTION_CASE_FOLDING, 0);/a\ \txml_parser_set_option\$p, XML_OPTION_TARGET_ENCODING,'UTF-8');" /var/www/html/lib/xml.php
+}
+
+
+update_csv_time(){
+### dubug wrong date on csv export data file ###
+xport_num=`cat -n graph_xport.php|grep foreach\($xport_array|awk '{print $1}'|sed -n "3"p`
+
+sed -i $((xport_num-1))'s|$|\n\t$derived_time = $xport_array["meta"]["start"];|' /var/www/html/graph_xport.php
+sed -i $((xport_num+2))'s|$|\n\t\t$derived_time = $derived_time + $xport_array["meta"]["step"];|' /var/www/html/graph_xport.php
+sed -i $((xport_num+3))"s|$|\n\t\t\$data = '\"' . date(\"Y-m-d H:i:s\", \$derived_time) . '\"\';|" /var/www/html/graph_xport.php
+
+}
+
+
+### Magic Starts Here
 
 install_dependency_packs
 set_timezone
-install_rrdtool
+pinstall_rrdtool
 install_cacti
 install_spine
 move_cacti
