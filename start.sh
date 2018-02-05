@@ -319,7 +319,7 @@ sed -i $((xport_num+3))"s|$|\n\t\t\$data = '\"' . date(\"Y-m-d H:i:s\", \$derive
 
 install_dependency_packs
 set_timezone
-pinstall_rrdtool
+install_rrdtool
 install_cacti
 install_spine
 move_cacti
