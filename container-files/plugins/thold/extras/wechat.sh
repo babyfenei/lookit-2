@@ -23,10 +23,6 @@ wx_sub=$3
 wx_msg=$(echo "$wx_msg"|sed 's/<br>/\n/g'|sed 's/<html>\|<\/html>\|<body>\|<\/body>\|<strong>\|<\/strong>\|<GRAPH>\|<a\|<\/a>//g'|sed 's/>/\n/g')
 wx_msg=$(echo "$wx_msg"|sed 's/\/\/graph.php/\/graph.php/g')
 
-###########################################以下为微信报警接口文件#####################################################
-#GURL="https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=$CropID&corpsecret=$Secret"
-#Gtoken=$(/usr/bin/curl -s -G $GURL | awk -F\" '{print $10}')
-#PURL="https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=$Gtoken"
 
 #############################################以下为相关变量处理##################################################
 UserID=${Users//,/|}
@@ -47,9 +43,13 @@ pic_url=$(echo "$wx_msg"|sed 's/\/graph.php/\/graph_image.php/g'|sed -n "/^http/
 gid=$(echo "$pic_url" | sed -r 's/.*graph_id=(.*)&rra_id=.*/\1/')
 gdate=_$(date +%Y_%m_%d_%H_%M_%S)
 mkdir -p /var/www/html/wx_img/
-curl -o /var/www/html/wx_img/$gid$gdate.jpg $pic_url
+pic_local=/var/www/html/wx_img/$gid$gdate.jpg
+curl -o $pic_local $pic_url
+#下面命令重置图片大小，适应企业号图文消息大小
+convert -resize 480x275! $pic_local $pic_local
 #下载报警图片到指定目录并以graph_id和日期命名
 gurl=$(echo "$wx_msg"|sed -n "/^http/p"|awk -F "graph" '{print $1}')wx_img/$gid$gdate.jpg
+
 #下载好的报警图片地址
 if [ ! -n "$pic_url" ] ;then
 #判断图片url是否存在
@@ -57,30 +57,6 @@ Pic=""
 else
 Pic=$gurl
 fi
-
-
-######################debug##################################################
-echo "CropID is $CropID" > /tmp/wxmsg.debug
-echo "Secret is $Secret" >> /tmp/wxmsg.debug
-echo "WechatID is $WechatID" >> /tmp/wxmsg.debug
-echo "Users is $Users" >> /tmp/wxmsg.debug
-echo "wx_sub is $wx_sub" >> /tmp/wxmsg.debug
-echo "wx_msg is $wx_msg" >> /tmp/wxmsg.debug
-echo "Til is $Til" >> /tmp/wxmsg.debug
-echo "Msg is $Msg" >> /tmp/wxmsg.debug
-echo "rrdurl is $rrdurl" >> /tmp/wxmsg.debug
-echo "pic_url is $pic_url" >> /tmp/wxmsg.debug
-echo "gid is $gid" >> /tmp/wxmsg.debug
-echo "gdate is $gdate" >> /tmp/wxmsg.debug
-echo "Pic is $Pic" >> /tmp/wxmsg.debug
-echo "body is $body" >> /tmp/wxmsg.debug
-echo "PURL is $PURL" >> /tmp/wxmsg.debug
-echo "GURL is $GURL" >> /tmp/wxmsg.debug
-echo "Gtoken is $Gtoken" >> /tmp/wxmsg.debug
-echo "AppID is $AppID" >> /tmp/wxmsg.debug
-#############################################################################
-
-
 
 ###########################################以下为微信报警接口文件#####################################################
 GURL="https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=$CropID&corpsecret=$Secret"
@@ -108,3 +84,4 @@ printf '\t}\n'
 printf '}\n'
 }
 /usr/bin/curl --data-ascii "$(body )" $PURL
+

@@ -38,13 +38,13 @@ install_dependency_packs() {
         yum makecache
         yum install -y epel-release
         yum install -y  perl-devel  php-gmp php-opcache php-devel php-mbstring php-mcrypt php-mysql php-phpunit-PHPUnit \
-        php-gd php-xml php-ldap php-mbstring php-mcrypt php-pecl-xdebug php-pecl-xhprof php-opcache php-pecl-redis php-redis \
+        php-gd php-xml  php-ldap php-mbstring php-mcrypt php-pecl-xdebug php-pecl-xhprof php-opcache php-pecl-redis php-redis \
         php-pecl-xdebug php-pecl-xhprof php-snmp
         yum install -y automake mysql mysql-devel mysql-server  gnumeric  wget gzip help2man libtool make net-snmp-devel \
         m4 glib  openssl-devel dos2unix   redis      \
         dejavu-fonts-common dejavu-lgc-sans-mono-fonts dejavu-sans-mono-fonts   \
         net-snmp net-snmp-utils  gcc pango-devel libxml2-devel net-snmp-devel cronie \
-        sendmail mailx  httpd  rsyslog-mysql vim ntpdate
+        sendmail mailx ImageMagick httpd  rsyslog-mysql vim ntpdate
         rpm --rebuilddb && yum clean all
         \cp -rf container-files/* /
         }
@@ -343,8 +343,6 @@ install_syslog
 load_temple_config
 update_cron
 update_httpd
-update_csv_time
-update_csv_CHN
 iptables -I INPUT -p tcp -m multiport --dport 3306,80 -j ACCEPT
  
 service iptables save
