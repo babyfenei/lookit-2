@@ -98,7 +98,7 @@ move_cacti() {
 		mkdir -p $path/cache
                 touch $path/log/cacti.log
                 chown -R apache:apache $path
-		\cp -rf /packages/lib/* $path/lib/
+		#\cp -rf /packages/lib/* $path/lib/
                 # If you need to open the URL directly, cacti does not need to add the suffix pattern of http://url/cacti You need cancels the downlink annotation to make it run
                 # sed -i "s/$url_path = '\/cacti\/';/$url_path = '\/';/g" $path/include/config.php 
                 sed -i "s/--maxrows=10000/--maxrows=1000000000/" $path/lib/rrd.php

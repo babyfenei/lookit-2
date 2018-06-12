@@ -28,7 +28,7 @@
 
 #### 使用方法 ###
 
-```git clone git@git.oschina.net:fenei/cacti-autoinstall-centos6-0.8.8h.git```
+```git clone https://github.com/babyfenei/cacti-autoinstall-centos6-0.8.8h.git```
 
 ```cd cacti-autoinstall-centos6-0.8.8h && bash start.sh```
 
