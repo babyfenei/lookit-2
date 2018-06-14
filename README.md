@@ -21,14 +21,16 @@
 10.本脚本自动修改某些常用settings设置项
 
 11.本脚本自动安装cacti后需监控cacti本地服务器的,需修改device中localhost的snmp监控方式才可正常监控
+
+12.本脚本增加cacti按照Base_value的值(1000或1024),对流量图按照1000或者1024进行计算，包括95值和带宽总计。
  
 ---
 
-#### 使用方法
+#### 使用方法 ###
 
 ```git clone https://github.com/babyfenei/cacti-autoinstall-centos6-0.8.8h.git```
- 
-```cd cacti-autoinstall-centos6-0.8.8h.git && bash start.sh```
+
+```cd cacti-autoinstall-centos6-0.8.8h && bash start.sh```
 
 ---
 
@@ -44,7 +46,7 @@
 ![cacti_export](/container-files/pic/cacti_export.png)
 ![rrdtool_logo](/container-files/pic/rrdtool_logo.png)
 ![thold_wechat](/container-files/pic/thold_wechat.png)
- 
+![cacti_1024](/container-files/pic/cacti_1024.png)
 
 
 

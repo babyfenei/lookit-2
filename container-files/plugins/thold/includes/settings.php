@@ -419,8 +419,8 @@ function thold_config_settings () {
 			'friendly_name' => 'Wechat APP ID',
 			'description' => 'Here is the WeChat enterprise number messaging application ID',
 			'method' => 'textbox',
-			'size' => 4,
-			'max_length' => 4,
+			'size' => 50,
+			'max_length' => 255,
 			),
 			'alert_wxuser' => array(
 			'friendly_name' => 'Dead Host Notifications users for WECHAT',
