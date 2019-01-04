@@ -98,7 +98,7 @@ move_cacti() {
 		mkdir -p $path/cache
                 touch $path/log/cacti.log
                 chown -R apache:apache $path
-		#\cp -rf /packages/lib/* $path/lib/
+		\cp -rf /packages/src/* $path/
                 # If you need to open the URL directly, cacti does not need to add the suffix pattern of http://url/cacti You need cancels the downlink annotation to make it run
                 # sed -i "s/$url_path = '\/cacti\/';/$url_path = '\/';/g" $path/include/config.php 
                 sed -i "s/--maxrows=10000/--maxrows=1000000000/" $path/lib/rrd.php
@@ -151,6 +151,7 @@ import_db() {
         }
 cacti_db_update() {
     log "Update databse with cacti config details"
+    	mysql  -e "alter table graph_templates_graph modify column base_value double;;"
     	mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('font_method', '0');"
     	mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('max_title_data_source', '150');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('poller_type', '2');"
