@@ -151,7 +151,7 @@ import_db() {
         }
 cacti_db_update() {
     log "Update databse with cacti config details"
-    	mysql  -e "alter table graph_templates_graph modify column base_value double;;"
+    	mysql  -e "alter table graph_templates_graph modify column base_value double;"
     	mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('font_method', '0');"
     	mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('max_title_data_source', '150');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('poller_type', '2');"
