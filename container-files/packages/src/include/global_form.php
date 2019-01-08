@@ -473,10 +473,10 @@ $struct_graph = array(
 		"description" => "Should be set to 1024 for memory and 1000 for traffic measurements.<br>
 			Set up the unit of flow conversion through base_value.<br>
 			If base_value is set to 1000, the value remains unchanged.<br>
-			If base_value is set to 1024, the value is divided by three 1024 and multiplied by three 1000, that is, 1.073741824.<br>
-			If base_value is set to something else, the value is directly divided by base_value. Such as:<br>
-			Two 1024 base_values are set to 1.048576<br>
-			Three 1126 base_values are set to 1.427628376"
+			If base_value is set to 1008, the value represents 1 1024 charge. Ie (1024*pow(1000,2)/pow(1000,3).<br>
+			If base_value is set to 1016, the value represents 2 1024 billing. Ie (pow(1024,2)*1000)/pow(1000,3).<br>
+			If base_value is set to 1065, the value represents 3 1024*1.126 billing. Ie (pow(1024,3)*1.126)/pow(1000,3).<br>
+			If base_value is set to other, it indicates the 3rd power of the value. Ie pow(base_value,3)/pow(1000,3).<br>
 		),
 	"unit_value" => array(
 		"friendly_name" => "Unit Grid Value (--unit/--y-grid)",

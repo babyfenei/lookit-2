@@ -866,13 +866,6 @@ function rrdtool_function_graph($local_graph_id, $rra_id, $graph_data_array, $rr
 		}
 	}
 	
-	if ($graph['base_value'] == 1000) {
-			$local_base_value = 1000;
-	}elseif ($graph['base_value'] == 1024) {
-			$local_base_value = 1024;
-	}else {
-			$local_base_value = 1024;
-	}
 	/* basic graph options */
 	$graph_opts .=
 		"--imgformat=" . $image_types{$graph["image_format_id"]} . RRD_NL .
@@ -880,8 +873,7 @@ function rrdtool_function_graph($local_graph_id, $rra_id, $graph_data_array, $rr
 		"--end=" . cacti_escapeshellarg($graph_end) . RRD_NL .
 		"--title=" . cacti_escapeshellarg($graph["title_cache"]) . RRD_NL .
 		"$rigid" .
-		#"--base=" . cacti_escapeshellarg($graph["base_value"]) . RRD_NL .
-		"--base=" . cacti_escapeshellarg($local_base_value) . RRD_NL .
+		"--base=" . cacti_escapeshellarg($graph["base_value"]) . RRD_NL .
 		"--height=" . cacti_escapeshellarg($graph_height) . RRD_NL .
 		"--width=" . cacti_escapeshellarg($graph_width) . RRD_NL .
 		"$scale" .

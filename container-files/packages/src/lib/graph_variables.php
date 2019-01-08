@@ -438,10 +438,20 @@ function variable_nth_percentile(&$regexp_match_array, &$graph, &$graph_item, &$
 	#$nth = convert_nth($graph['base_value'], $nth);
 	
 	if ($graph['base_value'] == 1000) {
+	}elseif ($graph['base_value'] == 1008) {
+			/* this is (1024*1000*1000)^(1/3) */
+			$nth /= 1.024;
+	}elseif ($graph['base_value'] == 1016) {
+			/* this is (1024*1024*1000)^(1/3) */
+			$nth /= 1.048576000;
 	}elseif ($graph['base_value'] == 1024) {
+			/* this is (1024*1024*1024)^(1/3) */
 			$nth /= 1.073741824;
+	}elseif ($graph['base_value'] == 1065) {
+			/* this is (1024*1024*1024*1.126)^(1/3) */
+			$nth /= 1.209033293824;
 	}else {
-			$nth /= $graph['base_value'];
+			$nth /= substr_replace(pow($graph['base_value'],3), '.', 1, 0);
 	}
 	
 	/* return the final result and round off to two decimal digits */
@@ -534,12 +544,22 @@ function variable_bandwidth_summation(&$regexp_match_array, &$graph, &$graph_ite
 	#$summation = convert_nth($graph['base_value'], $summation);
 	
 	if ($graph['base_value'] == 1000) {
-	}elseif ($graph['base_value'] == 1024) {
-			$summation /= 1.073741824;
-	}else {
-			$summation /= $graph['base_value'];
-	}
-	
+        }elseif ($graph['base_value'] == 1008) {
+                        /* this is (1024*1000*1000)^(1/3) */
+                        $summation /= 1.024;
+        }elseif ($graph['base_value'] == 1016) {
+                        /* this is (1024*1024*1000)^(1/3) */
+                        $summation /= 1.048576000;
+        }elseif ($graph['base_value'] == 1024) {
+                        /* this is (1024*1024*1024)^(1/3) */
+                        $summation /= 1.073741824;
+        }elseif ($graph['base_value'] == 1065) {
+                        /* this is (1024*1024*1024*1.126)^(1/3) */
+                        $summation /= 1.209033293824;
+        }else {
+                        $summation /= substr_replace(pow($graph['base_value'],3), '.', 1, 0);
+        }	
+
 	/* determine the floating point precision */
 	if (is_numeric($regexp_match_array[3])) {
 		$round_to = $regexp_match_array[3];
