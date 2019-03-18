@@ -34,17 +34,21 @@ install_dependency_packs() {
         log "Install dependency packs"
         mkdir -p $path/logs/
         curl -o /etc/yum.repos.d/CentOS-Base.repo -O http://mirrors.163.com/.help/CentOS6-Base-163.repo
-        yum clean all
+        rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm
+		rpm -ivh http://repo.webtatic.com/yum/el6/latest.rpm
+	    yum install -y epel-release
+		yum clean all
         yum makecache
-        yum install -y epel-release
-        yum install -y  perl-devel  php-gmp php-opcache php-devel php-mbstring php-mcrypt php-mysql php-phpunit-PHPUnit \
-        php-gd php-xml  php-ldap php-mbstring php-mcrypt php-pecl-xdebug php-pecl-xhprof php-opcache php-pecl-redis php-redis \
-        php-pecl-xdebug php-pecl-xhprof php-snmp
-        yum install -y automake mysql mysql-devel mysql-server  gnumeric  wget gzip help2man libtool make net-snmp-devel \
-        m4 glib  openssl-devel dos2unix   redis      \
+      
+		yum -y install mysql-server mysql-community-devel
+		yum list installed | grep mysql
+		yum -y install httpd php56w php56w-gd php56w-mysql php56w-bcmath php56w-mbstring php56w-xml php56w-ldap php56w-devel php56w-snmp
+        yum install -y automake  gnumeric  wget gzip help2man libtool make net-snmp-devel \
+        m4 glib  openssl-devel dos2unix   redis  libxml2-devel unixODBC-devel net-snmp-devel \
+		libcurl-devel libssh2-devel OpenIPMI-devel openssl-devel openldap-devel libevent-devel pcre-devel \
         dejavu-fonts-common dejavu-lgc-sans-mono-fonts dejavu-sans-mono-fonts   \
         net-snmp net-snmp-utils  gcc pango-devel libxml2-devel net-snmp-devel cronie \
-        sendmail mailx ImageMagick httpd  rsyslog-mysql vim ntpdate
+        sendmail mailx ImageMagick httpd  rsyslog-mysql vim ntpdate  perl-ExtUtils-CBuilder perl-ExtUtils-MakeMaker
         rpm --rebuilddb && yum clean all
         \cp -rf container-files/* /
         }
@@ -95,10 +99,10 @@ move_cacti() {
                 rm -rf $path/*
                 \cp -rf  /cacti/* $path/
                 mkdir -p $path/log
-		mkdir -p $path/cache
+                mkdir -p $path/cache
                 touch $path/log/cacti.log
                 chown -R apache:apache $path
-		\cp -rf /packages/src/* $path/
+                \cp -rf /packages/src/* $path/
                 # If you need to open the URL directly, cacti does not need to add the suffix pattern of http://url/cacti You need cancels the downlink annotation to make it run
                 # sed -i "s/$url_path = '\/cacti\/';/$url_path = '\/';/g" $path/include/config.php 
                 sed -i "s/--maxrows=10000/--maxrows=1000000000/" $path/lib/rrd.php
@@ -126,8 +130,8 @@ install_plugins() {
         mkdir -p $dir_path/container-files/plugins/
         cd $dir_path/container-files/plugins/
         #git clone https://github.com/Cacti/plugin_syslog.git
-		\cp -rf /plugins/* $path/plugins/
-		chown -R apache.apache $path/plugins/
+                \cp -rf /plugins/* $path/plugins/
+                chown -R apache.apache $path/plugins/
         log "The Cacti plug-in installation is complete"
         }
                 
@@ -139,8 +143,8 @@ create_db(){
     mysql  -e "set collation_server = utf8mb4_unicode_ci;"
     mysql  -e "set character_set_client = utf8mb4;"
     mysql  -e "CREATE DATABASE  IF NOT EXISTS cacti DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;"
-	mysql  -e "grant all on cacti.* to '$DB_USER'@'localhost' identified by '$DB_PASS'"
-	mysql  -e "grant select on mysql.time_zone_name to '$DB_USER'@'localhost' identified by '$DB_PASS'"
+        mysql  -e "grant all on cacti.* to '$DB_USER'@'localhost' identified by '$DB_PASS'"
+        mysql  -e "grant select on mysql.time_zone_name to '$DB_USER'@'localhost' identified by '$DB_PASS'"
     mysql  -e "flush privileges;"
     log "Database created successfully"
         }
@@ -151,9 +155,9 @@ import_db() {
         }
 cacti_db_update() {
     log "Update databse with cacti config details"
-    	mysql  -e "alter table graph_templates_graph modify column base_value double;"
-    	mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('font_method', '0');"
-    	mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('max_title_data_source', '150');"
+        mysql  -e "alter table graph_templates_graph modify column base_value double;"
+        mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('font_method', '0');"
+        mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('max_title_data_source', '150');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('poller_type', '2');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('plugin_watermark_text', '$rrdlogo');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('num_rows_device', '100');"
@@ -165,7 +169,7 @@ cacti_db_update() {
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('extended_paths', 'on');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('boost_png_cache_enable', 'on');"
         mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('automation_graphs_enabled', 'on');"
-	mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('realtime_cache_path', '/var/www/html/cache/');"
+        mysql  -e "INSERT INTO cacti.settings (name, value) VALUES ('realtime_cache_path', '/var/www/html/cache/');"
     log "Cacti Database updated"
         }
 spine_db_update() {
@@ -252,8 +256,8 @@ install_syslog() {
         echo '$ModLoad imtcp' >> /etc/rsyslog.conf
         echo '$UDPServerRun 514' >> /etc/rsyslog.conf
         echo '$ModLoad ommysql' >> /etc/rsyslog.conf
-	 echo "\$template cacti_syslog,\"INSERT INTO syslog_incoming(facility, priority, date, time, host, message) values (%syslogfacility%, %syslogpriority%, '%timereported:::date-mysql%', '%timereported:::date-mysql%', '%HOSTNAME%', '%msg%')\", SQL" >> /etc/rsyslog.conf
-	echo '*.*   >localhost,syslog,cactiuser,cactiuser;cacti_syslog' >> /etc/rsyslog.conf
+         echo "\$template cacti_syslog,\"INSERT INTO syslog_incoming(facility, priority, date, time, host, message) values (%syslogfacility%, %syslogpriority%, '%timereported:::date-mysql%', '%timereported:::date-mysql%', '%HOSTNAME%', '%msg%')\", SQL" >> /etc/rsyslog.conf
+        echo '*.*   >localhost,syslog,cactiuser,cactiuser;cacti_syslog' >> /etc/rsyslog.conf
         echo '*.*   /var/log/syslog.log' >> /etc/rsyslog.conf
         chkconfig rsyslog on
         service rsyslog restart
@@ -263,16 +267,16 @@ change_auth_config() {
         log "change export auth file"
         sed -i "s/auth.php/global.php/" $path/graph_xport.php
         sed -i "s/auth.php/global.php/" $path/graph_image.php
-	sed -i "s/\/usr\/local\/bin\/rrdtool/\/usr\/bin\/rrdtool/" $path/install/index.php
-	# chinese language support
-	sed -i "2 s/^/setlocale(LC_CTYPE,\"UTF8\",\"en_US.UTF-8\");\n/"  /var/www/html/lib/functions.php
+        sed -i "s/\/usr\/local\/bin\/rrdtool/\/usr\/bin\/rrdtool/" $path/install/index.php
+        # chinese language support
+        sed -i "2 s/^/setlocale(LC_CTYPE,\"UTF8\",\"en_US.UTF-8\");\n/"  /var/www/html/lib/functions.php
         log "export auth file changed"
         }
 update_cron() {
     log "Updating Cron jobs"
     # Add Cron jobs
     sed -i 's#$path#'$path'#' /etc/cron.d/cacti
-	chmod 644 /etc/cron.d/cacti
+        chmod 644 /etc/cron.d/cacti
     log "Crontab updated."
         }
 set_timezone() {
@@ -281,11 +285,11 @@ set_timezone() {
                 echo "date.timezone = ${TIMEZONE}" >> /etc/php.ini
                 log "TIMEZONE set to: ${TIMEZONE}"
     fi
-    	rm -rf /etc/localtime
-    	ln -s  /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
+        rm -rf /etc/localtime
+        ln -s  /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
         sed -i 's/LANG="en_US.UTF-8"/LANG="zh_CN.UTF-8"/' /etc/sysconfig/i18n
-	source /etc/sysconfig/i18n
-	}
+        source /etc/sysconfig/i18n
+        }
 update_httpd() {
     log "Updating httpd config"
     sed -i 's#$path#'$path'#' /etc/httpd/conf.d/cacti.conf
@@ -293,7 +297,7 @@ update_httpd() {
     sed -i 's/KeepAliveTimeout 15/KeepAliveTimeout 600/'  /etc/httpd/conf/httpd.conf
     sed -i 's/memory_limit = 128M/memory_limit = 2048M/' /etc/php.ini
     sed -i 's/max_execution_time = 30/max_execution_time = 300/' /etc/php.ini
-	log "httpd config updated."
+        log "httpd config updated."
         }
 
 update_csv_CHN(){
