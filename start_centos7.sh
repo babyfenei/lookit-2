@@ -12,10 +12,6 @@ TIMEZONE=Asia/Shanghai
 #Cacti installation directory
 path=/var/www/html
 dir_path=$(pwd)
-#Please enter the characters you want to modify, which can be chinese. After the input (input enter special characters please add in front of two escape character \\)
-rrdlogo="AMSINPUL Data\\/陕西西普数据通信股份有限公司"
-echo -e "\033[35m The RRDTOOL watermark you want to modify is:$rrdlogo \033[0m"
-echo -e "\033[35m Your Cacti installation path is:$path \033[0m"
 # Bash Colors
 green=`tput setaf 2`
 bold=`tput bold`
@@ -34,47 +30,31 @@ install_dependency_packs() {
 	mkdir -p $path/logs/
 	yum install -y epel-release
 	curl -o /etc/yum.repos.d/CentOS-Base.repo -O http://mirrors.163.com/.help/CentOS6-Base-163.repo
-	rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
 	rpm -Uvh https://schotty.com/yum/el/7/schotty-el7-release-7-1.noarch.rpm
 	rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
 	yum clean all
 	yum makecache
 	yum install -y --enablerepo=remi --enablerepo=remi-php56 php php-redis php-snmp php-opcache php-devel php-mbstring php-mcrypt php-mysqlnd php-phpunit-PHPUnit php-pecl-xdebug php-pecl-xhprof  php-gmp php-gd php-ldap
-	yum install -y mysql-community-server mysql-community-client  mysql-devel
-	yum install -y automake perl-devel  gnumeric  wget gzip help2man libtool make net-snmp-devel m4 openssl-devel dos2unix redis \
-	dejavu-fonts-common dejavu-lgc-sans-mono-fonts dejavu-sans-mono-fonts   \
-	net-snmp net-snmp-utils  gcc pango-devel libxml2-devel net-snmp-devel cronie \
-	sendmail  httpd  rsyslog-mysql vim ntpdate perl-devel
+	yum install -y mariadb mariadb-server mariadb-devel
+	yum install -y automake perl-devel  gnumeric  wget gzip help2man libtool make net-snmp-devel m4 openssl-devel dos2unix redis dejavu-fonts-common dejavu-lgc-sans-mono-fonts dejavu-sans-mono-fonts net-snmp net-snmp-utils  gcc pango-devel libxml2-devel net-snmp-devel cronie sendmail  httpd  rsyslog-mysql vim ntpdate perl-devel
 	rpm --rebuilddb && yum clean all
 	\cp -rf container-files/* /
     }
 
 install_rrdtool() {
 	log "### Install rrdtool###"
-	mkdir -p /rrdtool/ && rm -rf /rrdtool/*
-	#wget --no-check-certificate -O /packages/rrdtool/rrdtool.tar.gz  http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.4.9.tar.gz 
-	tar zxvf /packages/rrdtool/rrdtool*.tar.gz -C /rrdtool --strip-components=1
-	cd /rrdtool/
-	sed -i "s/RRDTOOL \/ TOBI OETIKER/$rrdlogo/g" src/rrd_graph.c
-	#Modify watermark transparency
-	sed -i 's/water_color.alpha = 0.3;/water_color.alpha = 0.5;/g' src/rrd_graph.c
-	./configure --prefix=/usr/local/rrdtool && make && make install
-	rm -rf /bin/rrdtool
-	ln -s /usr/local/rrdtool/bin/rrdtool /bin/rrdtool
-	rm -rf /packages/rrdtool/rrdtool*.tar.gz && rm -rf /rrdtool
+	yum localinstall -y  /packages/rrdtool/rrdtool-1.4.8-9.el7.x86_64.rpm
     }
 
 install_cacti() {
 	log "### ### Install cacti"
-	# wget --no-check-certificate -O /packages/cacti/cacti.tar.gz   http://www.cacti.net/downloads/cacti-0.8.8h.tar.gz 
 	mkdir -p /cacti/ && rm -rf /cacti/*
-	tar zxvf /packages/cacti/cacti*.tar.gz -C /cacti --strip-components=1
+	tar xf /packages/cacti/cacti*.tar.gz -C /cacti --strip-components=1
 	rm -rf /packages/cacti/cacti*.tar.gz
 	}
 
 install_spine() {
 	log "### ### Install spine"
-	#wget --no-check-certificate -O /packages/spine/cacti-spine.tar.gz http://www.cacti.net/downloads/spine/cacti-spine-0.8.8h.tar.gz
 	mkdir -p /spine && rm -rf /spine/*
 	tar xf /packages/spine/cacti-spine*.tar.gz -C /spine --strip-components=1
 	rm -f /packages/spine/cacti-spine*.tar.gz
@@ -130,7 +110,8 @@ install_plugins() {
                 
 create_db(){
     log "Creating Cacti Database"
-    systemctl restart  mysqld
+    systemctl restart  mariadb
+    systemctl enable mariadb
     mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql mysql
     mysql  -e "set collation_server = utf8mb4_unicode_ci;"
     mysql  -e "set character_set_client = utf8mb4;"
